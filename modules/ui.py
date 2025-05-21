@@ -773,7 +773,7 @@ def update_preview(frame_number: int = 0) -> None:
         )
         image = ctk.CTkImage(image, size=image.size)
         preview_label.configure(image=image)
-        update_status("Processing succeed!")
+        update_status("Processing succeeded!")
         PREVIEW.deiconify()
 
 
