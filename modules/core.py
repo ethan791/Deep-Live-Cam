@@ -81,7 +81,7 @@ def parse_args() -> None:
     modules.globals.execution_threads = args.execution_threads
     modules.globals.lang = args.lang
 
-    #for ENHANCER tumbler:
+    # enable face_enhancer toggle from CLI
     if 'face_enhancer' in args.frame_processor:
         modules.globals.fp_ui['face_enhancer'] = True
     else:
@@ -193,7 +193,7 @@ def start() -> None:
             frame_processor.process_image(modules.globals.source_path, modules.globals.output_path, modules.globals.output_path)
             release_resources()
         if is_image(modules.globals.target_path):
-            update_status('Processing to image succeed!')
+            update_status('Processing to image succeeded!')
         else:
             update_status('Processing to image failed!')
         return
@@ -233,7 +233,7 @@ def start() -> None:
     # clean and validate
     clean_temp(modules.globals.target_path)
     if is_video(modules.globals.target_path):
-        update_status('Processing to video succeed!')
+        update_status('Processing to video succeeded!')
     else:
         update_status('Processing to video failed!')
 
