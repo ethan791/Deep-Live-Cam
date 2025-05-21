@@ -49,7 +49,7 @@ def parse_args() -> None:
     program.add_argument('--live-resizable', help='The live camera frame is resizable', dest='live_resizable', action='store_true', default=False)
     program.add_argument('--max-memory', help='maximum amount of RAM in GB', dest='max_memory', type=int, default=suggest_max_memory())
     program.add_argument('--execution-provider', help='execution provider', dest='execution_provider', default=['cpu'], choices=suggest_execution_providers(), nargs='+')
-    program.add_argument('--execution-threads', help='number of execution threads', dest='execution_threads', type=int, default=suggest_execution_threads())
+    program.add_argument('--execution-threads', help='number of execution threads', dest='execution_threads', type=int, default=None)
     program.add_argument('-v', '--version', action='version', version=f'{modules.metadata.name} {modules.metadata.version}')
 
     # register deprecated args
@@ -78,7 +78,11 @@ def parse_args() -> None:
     modules.globals.live_resizable = args.live_resizable
     modules.globals.max_memory = args.max_memory
     modules.globals.execution_providers = decode_execution_providers(args.execution_provider)
-    modules.globals.execution_threads = args.execution_threads
+    modules.globals.execution_threads = (
+        args.execution_threads
+        if args.execution_threads is not None
+        else suggest_execution_threads(modules.globals.execution_providers)
+    )
     modules.globals.lang = args.lang
 
     # enable face_enhancer toggle from CLI
@@ -128,10 +132,11 @@ def suggest_execution_providers() -> List[str]:
     return encode_execution_providers(onnxruntime.get_available_providers())
 
 
-def suggest_execution_threads() -> int:
-    if 'DmlExecutionProvider' in modules.globals.execution_providers:
+def suggest_execution_threads(execution_providers: List[str] | None = None) -> int:
+    providers = execution_providers if execution_providers is not None else modules.globals.execution_providers
+    if 'DmlExecutionProvider' in providers:
         return 1
-    if 'ROCMExecutionProvider' in modules.globals.execution_providers:
+    if 'ROCMExecutionProvider' in providers:
         return 1
     return 8
 
